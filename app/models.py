@@ -18,7 +18,7 @@ class Users(models.Model):
   password=models.CharField(max_length=250, null=False, default="")
   createdAt=models.DateTimeField(auto_created=True, null=True)
   updatedAt=models.DateTimeField(auto_created=True, null=True)
-  
+    
 class Parcours(models.Model):
   id = models.AutoField(primary_key=True)
   userId = models.CharField(max_length=50, null=False)
