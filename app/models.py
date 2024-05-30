@@ -21,25 +21,31 @@ class Users(models.Model):
     
 class Parcours(models.Model):
   id = models.AutoField(primary_key=True)
-  userId = models.CharField(max_length=50, null=False)
+  userId = models.CharField(max_length=50, default="")
+  projectId=models.CharField(max_length=50, default="")
   value = models.CharField(max_length=250, null=False)
   
 class Formations(models.Model):
   id = models.AutoField(primary_key=True)
-  userId = models.CharField(max_length=50, null=False)
+  userId = models.CharField(max_length=50, default="")
+  projectId=models.CharField(max_length=50, default="")
   value = models.CharField(max_length=250, null=False)
   
 class Competences(models.Model):
   id = models.AutoField(primary_key=True)
-  userId = models.CharField(max_length=50, null=False)
+  userId = models.CharField(max_length=50, default="")
+  projectId=models.CharField(max_length=50, default="")
   value = models.CharField(max_length=250, null=False)
   
 class ExperiencesPro(models.Model):
   id = models.AutoField(primary_key=True)
-  userId = models.CharField(max_length=50, null=False)
+  userId = models.CharField(max_length=50, default="")
+  projectId=models.CharField(max_length=50, default="")
   value = models.CharField(max_length=250, null=False)
   
-class CentreInterets(models.Model):
+class Postes(models.Model):
   id = models.AutoField(primary_key=True)
-  userId = models.CharField(max_length=50, null=False)
-  value = models.CharField(max_length=250, null=False)
+  titre = models.CharField(max_length=50, null=False, default="")
+  image=models.CharField(max_length=250, default="/user.jpg")
+  createdAt=models.DateTimeField(auto_created=True, null=True)
+  updatedAt=models.DateTimeField(auto_created=True, null=True)

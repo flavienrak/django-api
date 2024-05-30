@@ -60,6 +60,52 @@ def signIn(request):
   except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
       
+@api_view(['POST'])
+def editProfil(request, id):
+  try:
+    nom = request.data.get('nom')
+    prenom = request.data.get('prenom')
+    age = request.data.get('age')
+    sexe = request.data.get('sexe')
+    etatCivil = request.data.get('etatCivil')
+    adresse = request.data.get('adresse')
+    telephone = request.data.get('telephone')
+    poste = request.data.get('poste')
+    biographie = request.data.get('biographie')
+
+    if not id:
+      return Response({"idRequired": True})
+    
+    user = Users.objects.filter(id=id).first()
+    if not user:
+      return Response({"userNotFound": True})
+      
+    if nom:
+        user.nom = nom
+    if prenom:
+        user.prenom = prenom
+    if age:
+        user.age = age
+    if sexe:
+        user.sexe = sexe
+    if etatCivil:
+        user.etatCivil = etatCivil
+    if adresse:
+        user.adresse = adresse
+    if telephone:
+        user.telephone = telephone
+    if poste:
+        user.poste = poste
+    if biographie:
+        user.biographie = biographie
+
+    user.save()    
+    
+    serializer = UserSerializer(user)
+    return Response({ 'user': serializer.data}, status=status.HTTP_200_OK)
+  except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+      
 @api_view(['GET'])
 def verifyToken(request, token):
   try:
@@ -72,8 +118,11 @@ def verifyToken(request, token):
     user = Users.objects.filter(id=user_id).first()
     if not user:
       return Response({"userNotFound": True})
+    
+    serializer = UserSerializer(user)
       
-    return Response({ "decodedToken": decodedToken }, status=status.HTTP_200_OK)
+    return Response({ "decodedToken" : decodedToken, "user" : serializer.data }, status=status.HTTP_200_OK)
   except Exception as e:
       return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+      
       
