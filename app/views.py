@@ -1,12 +1,11 @@
-from django.utils import timezone
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from app.models import Users
-from rest_framework import status
-from app.serializers import UserSerializer
-from django.contrib.auth.hashers import make_password, check_password
 import jwt
 import datetime
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from django.contrib.auth.hashers import make_password, check_password
+from app.models import *
+from app.serializers import *
 
 key = "secret_key"
 
@@ -29,9 +28,7 @@ def signUp(request):
           prenom=data.get('prenom'),
           email=data.get('email'),
           password=hashed_password,
-          createdAt=timezone.now(),
-          updatedAt=timezone.now()
-      ) 
+    ) 
     user.save()
     serializer = UserSerializer(user)
     return Response({ 'user': serializer.data }, status=status.HTTP_201_CREATED)
@@ -65,13 +62,18 @@ def editProfil(request, id):
   try:
     nom = request.data.get('nom')
     prenom = request.data.get('prenom')
-    age = request.data.get('age')
-    sexe = request.data.get('sexe')
-    etatCivil = request.data.get('etatCivil')
-    adresse = request.data.get('adresse')
     telephone = request.data.get('telephone')
-    poste = request.data.get('poste')
     biographie = request.data.get('biographie')
+    pays = request.data.get('pays')
+    region = request.data.get('region')
+    ville = request.data.get('ville')
+    image = request.data.get('image')
+    titres = request.data.get('titres')
+    diplomes = request.data.get('diplomes')
+    competences = request.data.get('competences')
+    experiences = request.data.get('experiences')
+    formations = request.data.get('formations')
+    langues = request.data.get('langues')
 
     if not id:
       return Response({"idRequired": True})
@@ -79,30 +81,68 @@ def editProfil(request, id):
     user = Users.objects.filter(id=id).first()
     if not user:
       return Response({"userNotFound": True})
+    
+    if titres:
+      allTitres = Titres.objects.filter(userId=id)
+      existing_titles_dict = {titre.value: titre for titre in allTitres}
+
+      new_titles_set = set(titres)
+      existing_titles_set = set(existing_titles_dict.keys())
+
+      titles_to_delete = existing_titles_set - new_titles_set
+      titles_to_add = new_titles_set - existing_titles_set
+
+      if titles_to_delete:
+          Titres.objects.filter(userId=id, value__in=titles_to_delete).delete()
+
+      # Ajouter les nouveaux titres
+      for title in titles_to_add:
+          Titres.objects.create(userId=id, value=title)
+          
+      # Récupérer tous les titres mis à jour pour l'utilisateur donné
+      nouveauxTitres = Titres.objects.filter(userId=id).values_list('value', flat=True)
+      
+    if diplomes:
+      allTitres = Diplomes.objects.filter(userId=id)
+      existing_titles_dict = {titre.value: titre for titre in allTitres}
+
+      new_titles_set = set(titres)
+      existing_titles_set = set(existing_titles_dict.keys())
+
+      titles_to_delete = existing_titles_set - new_titles_set
+      titles_to_add = new_titles_set - existing_titles_set
+
+      if titles_to_delete:
+          Titres.objects.filter(userId=id, value__in=titles_to_delete).delete()
+
+      # Ajouter les nouveaux titres
+      for title in titles_to_add:
+          Titres.objects.create(userId=id, value=title)
+          
+      # Récupérer tous les titres mis à jour pour l'utilisateur donné
+      nouveauxTitres = Titres.objects.filter(userId=id).values_list('value', flat=True)
       
     if nom:
         user.nom = nom
     if prenom:
         user.prenom = prenom
-    if age:
-        user.age = age
-    if sexe:
-        user.sexe = sexe
-    if etatCivil:
-        user.etatCivil = etatCivil
-    if adresse:
-        user.adresse = adresse
     if telephone:
         user.telephone = telephone
-    if poste:
-        user.poste = poste
     if biographie:
         user.biographie = biographie
+    if pays:
+        user.pays = pays
+    if region:
+        user.region = region
+    if ville:
+        user.ville = ville
+    if image:
+        user.image = image
 
     user.save()    
     
     serializer = UserSerializer(user)
-    return Response({ 'user': serializer.data}, status=status.HTTP_200_OK)
+    return Response({ 'user': serializer.data, 'titres': list(nouveauxTitres)}, status=status.HTTP_200_OK)
   except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
       
