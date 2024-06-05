@@ -118,3 +118,20 @@ class PosteLangues(models.Model):
     id = models.AutoField(primary_key=True)
     posteId = models.ForeignKey(Postes, on_delete=models.CASCADE)
     value = models.CharField(max_length=25, null=False, default="")
+
+
+# Match result
+
+
+class MatchResult(models.Model):
+    id = models.AutoField(primary_key=True)
+    posteId = models.ForeignKey(Postes, on_delete=models.CASCADE)
+    userId = models.ForeignKey(Users, on_delete=models.CASCADE)
+    titre = models.DecimalField(max_digits=5, decimal_places=3)
+    globalScore = models.DecimalField(max_digits=5, decimal_places=3)
+    competences = models.DecimalField(max_digits=5, decimal_places=3)
+    diplomes = models.DecimalField(max_digits=5, decimal_places=3)
+    experiences = models.DecimalField(max_digits=5, decimal_places=3)
+    qualites = models.DecimalField(max_digits=5, decimal_places=3)
+    createdAt = models.DateTimeField(auto_now_add=True, null=True)
+    updatedAt = models.DateTimeField(auto_now=True, null=True)

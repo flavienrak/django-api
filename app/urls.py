@@ -15,5 +15,10 @@ urlpatterns = [
         views.removePoste,
         name="remove-poste",
     ),
+    path(
+        "user/<str:id>/poste/<str:pk>/match-result",
+        views.matchPoste,
+        name="match-poste",
+    ),
     path("verify-token/<str:token>", views.verifyToken, name="verify-token"),
 ]

@@ -7,6 +7,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.forms.models import model_to_dict
 from app.models import *
 from app.serializers import *
+from app.algo import *
+from app.utils import *
 
 key = "secret_key"
 
@@ -653,6 +655,58 @@ def removePoste(request, id, pk):
 
         return Response(
             {"poste": poste_data},
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+def matchPoste(request, id, pk):
+    try:
+        if not id:
+            return Response({"userIdRequired": True})
+        user = Users.objects.filter(id=id).first()
+
+        if not user:
+            return Response({"userNotFound": True})
+
+        if not pk:
+            return Response({"posteIdRequired": True})
+        poste = Postes.objects.filter(id=pk, isDeleted=False).first()
+
+        if not poste:
+            return Response({"posteNotFound": True})
+
+        poste_data = PosteInfo(poste)
+        user_data = UserInfo(user)
+
+        result = compute_similarity(job=poste_data, profile=user_data)
+
+        titre_score = round(result["details"]["titre"], 3)
+        global_score = round(result["global_score"], 3)
+        competences_score = round(result["details"]["competences"], 3)
+        diplomes_score = round(result["details"]["diplomes"], 3)
+        experiences_score = round(result["details"]["experiences"], 3)
+        qualites_score = round(result["details"]["qualites"], 3)
+
+        match, created = MatchResult.objects.update_or_create(
+            posteId=poste,
+            userId=user,
+            defaults={
+                "titre": titre_score,
+                "globalScore": global_score,
+                "competences": competences_score,
+                "diplomes": diplomes_score,
+                "experiences": experiences_score,
+                "qualites": qualites_score,
+            },
+        )
+
+        match_result = MatchResultSerializer(match)
+
+        return Response(
+            {"match": match_result.data},
             status=status.HTTP_200_OK,
         )
     except Exception as e:
