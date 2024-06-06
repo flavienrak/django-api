@@ -10,6 +10,7 @@ from app.serializers import *
 from app.algo import *
 from app.utils import *
 
+
 key = "secret_key"
 
 
@@ -126,7 +127,7 @@ def editProfil(request, id):
         pays = data.get("pays")
         region = data.get("region")
         ville = data.get("ville")
-        image = data.get("image")
+        # image = data.get("image")
         postes = data.get("postes")
         qualites = data.get("qualites")
         diplomes = data.get("diplomes")
@@ -317,8 +318,12 @@ def editProfil(request, id):
             user.region = region
         if ville:
             user.ville = ville
-        if image:
-            user.image = image
+        # if "image" in request.FILES:
+        #     image = request.FILES["image"]
+        #     ext = image.name.split(".")[-1]
+        #     new_filename = f"{user.id}.{ext}"
+        #     user.image.save(new_filename, image)
+        #     user.image = f"/media/images/{new_filename}"
 
         user.save()
         user_data = model_to_dict(user)

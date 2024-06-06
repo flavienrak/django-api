@@ -14,7 +14,8 @@ class Users(models.Model):
     ville = models.CharField(max_length=50, null=False, default="")
     telephone = models.CharField(max_length=25, unique=True, null=False, default="")
     biographie = models.CharField(max_length=250, default="")
-    image = models.CharField(max_length=250, null=False, default="")
+    # image = models.ImageField(upload_to="images/", blank=True, null=True)
+    image = models.CharField(max_length=250, unique=True, blank=True, null=True)
     createdAt = models.DateTimeField(auto_now_add=True, null=True)
     updatedAt = models.DateTimeField(auto_now=True, null=True)
 
