@@ -6,3 +6,4 @@ mysqlclient
 scikit-learn
 fuzzywuzzy
 Pillow
+python-Levenshtein
