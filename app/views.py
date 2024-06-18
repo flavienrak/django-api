@@ -86,7 +86,7 @@ def getUser(request, id):
         if not user:
             return Response({"userNotFound": True})
 
-        user_data = model_to_dict(user)
+        user_data = model_to_dict(user, exclude=["password"])
 
         user_data["postes"] = list(
             UserPostes.objects.filter(userId=id).values_list("value", flat=True)
@@ -326,7 +326,7 @@ def editProfil(request, id):
         #     user.image = f"/media/images/{new_filename}"
 
         user.save()
-        user_data = model_to_dict(user)
+        user_data = model_to_dict(user, exclude=["password"])
 
         user_data["postes"] = list(
             UserPostes.objects.filter(userId=id).values_list("value", flat=True)

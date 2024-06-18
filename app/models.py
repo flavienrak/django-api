@@ -12,7 +12,7 @@ class Users(models.Model):
     pays = models.CharField(max_length=25, null=False, default="")
     region = models.CharField(max_length=50, null=False, default="")
     ville = models.CharField(max_length=50, null=False, default="")
-    telephone = models.CharField(max_length=25, unique=True, null=False, default="")
+    telephone = models.CharField(max_length=25, null=False, default="")
     biographie = models.CharField(max_length=250, default="")
     # image = models.ImageField(upload_to="images/", blank=True, null=True)
     image = models.CharField(max_length=250, unique=True, blank=True, null=True)
